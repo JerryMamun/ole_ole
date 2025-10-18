@@ -1,63 +1,595 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Ole Chicken Burgers — Order Online</title>
-  <meta name="description" content="Order online from Ole Chicken Burgers.">
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          colors: { 'ole-yellow': '#FFC107', 'ole-orange': '#FF5722', 'ole-dark': '#212121' }
+    <meta name="x-poe-datastore-behavior" content="local_only">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline' 'unsafe-eval' data: blob: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://code.jquery.com https://unpkg.com https://d3js.org https://threejs.org https://cdn.plot.ly https://stackpath.bootstrapcdn.com https://maps.googleapis.com https://cdn.tailwindcss.com https://ajax.googleapis.com https://kit.fontawesome.com https://cdn.datatables.net https://maxcdn.bootstrapcdn.com https://code.highcharts.com https://tako-static-assets-production.s3.amazonaws.com https://www.youtube.com https://fonts.googleapis.com https://fonts.gstatic.com https://pfst.cf2.poecdn.net https://puc.poecdn.net https://i.imgur.com https://wikimedia.org https://*.icons8.com https://*.giphy.com https://picsum.photos https://images.unsplash.com; frame-src 'self' https://www.youtube.com https://trytako.com; child-src 'self'; manifest-src 'self'; worker-src 'self'; upgrade-insecure-requests; block-all-mixed-content;">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ole Chicken Burgers - Order Online</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'ole-yellow': '#FFC107',
+                        'ole-orange': '#FF5722',
+                        'ole-dark': '#212121'
+                    }
+                }
+            }
         }
-      }
-    }
-  </script>
-  <style>
-    .menu-card { transition: all .3s ease; }
-    .menu-card:hover { transform: translateY(-2px); }
-    .cart-badge { animation: bounce .6s ease-in-out; }
-    @keyframes bounce{0%,20%,50%,80%,100%{transform:translateY(0)}40%{transform:translateY(-10px)}60%{transform:translateY(-5px)}}
-  </style>
+    </script>
+    <style>
+        .menu-card {
+            transition: all 0.3s ease;
+        }
+        .menu-card:hover {
+            transform: translateY(-2px);
+        }
+        .cart-badge {
+            animation: bounce 0.6s ease-in-out;
+        }
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-10px); }
+            60% { transform: translateY(-5px); }
+        }
+    </style>
 </head>
 <body class="bg-gray-50 dark:bg-gray-900">
-  <script>
-    if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) document.documentElement.classList.add('dark');
-    window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => e.matches ? document.documentElement.classList.add('dark') : document.documentElement.classList.remove('dark'));
-  </script>
+    <script>
+        if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+            document.documentElement.classList.add('dark');
+        }
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', event => {
+            if (event.matches) {
+                document.documentElement.classList.add('dark');
+            } else {
+                document.documentElement.classList.remove('dark');
+            }
+        });
+    </script>
 
-  <header class="bg-ole-yellow dark:bg-ole-dark shadow-lg sticky top-0 z-50">
-    <div class="container mx-auto px-4 py-4 flex justify-between items-center">
-      <div class="flex items-center space-x-4">
-        <a href="index.html" class="w-16 h-16 bg-white dark:bg-gray-800 rounded-full flex items-center justify-center shadow-lg p-1">
-          <img src="logo.png" alt="Ole Logo" class="w-full h-full object-contain rounded-full">
-        </a>
-        <div>
-          <h1 class="text-2xl font-bold text-ole-dark dark:text-white">Ole Chicken Burgers</h1>
-          <p class="text-sm text-ole-dark dark:text-gray-300">Fresh • Delicious • Fast</p>
+    <header class="bg-ole-yellow dark:bg-ole-dark shadow-lg sticky top-0 z-50">
+        <div class="container mx-auto px-4 py-4">
+            <div class="flex justify-between items-center">
+                <div class="flex items-center space-x-4">
+                    <a href="Index.html" class="w-16 h-16 bg-white dark:bg-gray-800 rounded-full flex items-center justify-center shadow-lg p-1">
+                        <img src="ole logo (8) (1).png" alt="Ole Logo" class="w-full h-full object-contain rounded-full">
+                    </a>
+                    <div>
+                        <h1 class="text-2xl font-bold text-ole-dark dark:text-white">Ole Chicken Burgers</h1>
+                        <p class="text-sm text-ole-dark dark:text-gray-300">Fresh • Delicious • Fast</p>
+                    </div>
+                </div>
+                <button id="cart-btn" class="relative bg-ole-orange text-white px-6 py-3 rounded-lg font-semibold hover:bg-opacity-90 transition-all">
+                    🛒 Cart
+                    <span id="cart-count" class="absolute -top-2 -right-2 bg-red-500 text-white text-xs w-6 h-6 rounded-full flex items-center justify-center hidden cart-badge">0</span>
+                </button>
+            </div>
         </div>
-      </div>
-      <button id="cart-btn" class="relative bg-ole-orange text-white px-6 py-3 rounded-lg font-semibold hover:bg-opacity-90 transition-all">
-        🛒 Cart
-        <span id="cart-count" class="absolute -top-2 -right-2 bg-red-500 text-white text-xs w-6 h-6 rounded-full flex items-center justify-center hidden cart-badge">0</span>
-      </button>
+    </header>
+
+    <nav class="bg-white dark:bg-gray-800 shadow-md">
+        <div class="container mx-auto px-4">
+            <div class="flex overflow-x-auto space-x-6 py-4">
+                <button class="category-btn whitespace-nowrap px-4 py-2 rounded-lg font-medium bg-ole-orange text-white" data-category="chicken-burgers">
+                    🍔 Chicken Burgers
+                </button>
+                <button class="category-btn whitespace-nowrap px-4 py-2 rounded-lg font-medium text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700" data-category="other-burgers">
+                    🥩 Other Burgers
+                </button>
+                <button class="category-btn whitespace-nowrap px-4 py-2 rounded-lg font-medium text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700" data-category="chicken">
+                    🍗 Chicken
+                </button>
+                <button class="category-btn whitespace-nowrap px-4 py-2 rounded-lg font-medium text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700" data-category="wraps">
+                    🌯 Wraps
+                </button>
+                <button class="category-btn whitespace-nowrap px-4 py-2 rounded-lg font-medium text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700" data-category="sides">
+                    🍟 Sides &amp; Drinks
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container mx-auto px-4 py-8">
+        <section id="chicken-burgers" class="category-section">
+            <h2 class="text-3xl font-bold text-gray-800 dark:text-white mb-6">🍔 Chicken Burgers</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div class="menu-card bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 border-l-4 border-ole-orange">
+                    <h3 class="text-xl font-bold text-gray-800 dark:text-white mb-2">Crispy</h3>
+                    <p class="text-gray-600 dark:text-gray-300 text-sm mb-4">Two crispy tenders, sliced cheese, lettuce, mayo</p>
+                    <div class="flex justify-between items-center">
+                        <span class="text-2xl font-bold text-ole-orange">$12.50</span>
+                        <button class="add-to-cart bg-ole-orange text-white px-4 py-2 rounded-lg hover:bg-opacity-90 transition-all" data-name="Crispy" data-price="12.50" data-description="Two crispy tenders, sliced cheese, lettuce, mayo">
+                            Add to Cart
+                        </button>
+                    </div>
+                </div>
+
+                <div class="menu-card bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 border-l-4 border-ole-orange">
+                    <h3 class="text-xl font-bold text-gray-800 dark:text-white mb-2">Chicken Roll</h3>
+                    <p class="text-gray-600 dark:text-gray-300 text-sm mb-4">Grilled BBQ chicken, sliced cheese, lettuce, mayo</p>
+                    <div class="flex justify-between items-center">
+                        <span class="text-2xl font-bold text-ole-orange">$11.00</span>
+                        <button class="add-to-cart bg-ole-orange text-white px-4 py-2 rounded-lg hover:bg-opacity-90 transition-all" data-name="Chicken Roll" data-price="11.00" data-description="Grilled BBQ chicken, sliced cheese, lettuce, mayo">
+                            Add to Cart
+                        </button>
+                    </div>
+                </div>
+
+                <div class="menu-card bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 border-l-4 border-ole-orange">
+                    <h3 class="text-xl font-bold text-gray-800 dark:text-white mb-2">Pineole</h3>
+                    <p class="text-gray-600 dark:text-gray-300 text-sm mb-4">Two grilled fillets, sliced cheese, pineapple, lettuce, mayo</p>
+                    <div class="flex justify-between items-center">
+                        <span class="text-2xl font-bold text-ole-orange">$12.50</span>
+                        <button class="add-to-cart bg-ole-orange text-white px-4 py-2 rounded-lg hover:bg-opacity-90 transition-all" data-name="Pineole" data-price="12.50" data-description="Two grilled fillets, sliced cheese, pineapple, lettuce, mayo">
+                            Add to Cart
+                        </button>
+                    </div>
+                </div>
+
+                <div class="menu-card bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 border-l-4 border-ole-orange">
+                    <h3 class="text-xl font-bold text-gray-800 dark:text-white mb-2">Tropicana</h3>
+                    <p class="text-gray-600 dark:text-gray-300 text-sm mb-4">Two grilled fillets, bacon, sliced cheese, pineapple, lettuce, mayo</p>
+                    <div class="flex justify-between items-center">
+                        <span class="text-2xl font-bold text-ole-orange">$13.50</span>
+                        <button class="add-to-cart bg-ole-orange text-white px-4 py-2 rounded-lg hover:bg-opacity-90 transition-all" data-name="Tropicana" data-price="13.50" data-description="Two grilled fillets, bacon, sliced cheese, pineapple, lettuce, mayo">
+                            Add to Cart
+                        </button>
+                    </div>
+                </div>
+
+                <div class="menu-card bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 border-l-4 border-ole-orange">
+                    <h3 class="text-xl font-bold text-gray-800 dark:text-white mb-2">Big Daddy</h3>
+                    <p class="text-gray-600 dark:text-gray-300 text-sm mb-4">Three grilled fillets, egg, bacon, sliced cheese, pineapple, lettuce, mayo</p>
+                    <div class="flex justify-between items-center">
+                        <span class="text-2xl font-bold text-ole-orange">$18.70</span>
+                        <button class="add-to-cart bg-ole-orange text-white px-4 py-2 rounded-lg hover:bg-opacity-90 transition-all" data-name="Big Daddy" data-price="18.70" data-description="Three grilled fillets, egg, bacon, sliced cheese, pineapple, lettuce, mayo">
+                            Add to Cart
+                        </button>
+                    </div>
+                </div>
+
+                <div class="menu-card bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 border-l-4 border-ole-orange">
+                    <h3 class="text-xl font-bold text-gray-800 dark:text-white mb-2">Kids Burger</h3>
+                    <p class="text-gray-600 dark:text-gray-300 text-sm mb-4">One grilled fillet, sliced cheese, lettuce, mayo</p>
+                    <div class="flex justify-between items-center">
+                        <span class="text-2xl font-bold text-ole-orange">$8.00</span>
+                        <button class="add-to-cart bg-ole-orange text-white px-4 py-2 rounded-lg hover:bg-opacity-90 transition-all" data-name="Kids Burger" data-price="8.00" data-description="One grilled fillet, sliced cheese, lettuce, mayo">
+                            Add to Cart
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="other-burgers" class="category-section hidden">
+            <h2 class="text-3xl font-bold text-gray-800 dark:text-white mb-6">🥩 Other Burgers</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div class="menu-card bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 border-l-4 border-ole-orange">
+                    <h3 class="text-xl font-bold text-gray-800 dark:text-white mb-2">Cheese Burger</h3>
+                    <p class="text-gray-600 dark:text-gray-300 text-sm mb-4">Beef patty, sliced cheese, sauce: tomato or BBQ</p>
+                    <div class="flex justify-between items-center">
+                        <span class="text-2xl font-bold text-ole-orange">$11.00</span>
+                        <button class="add-to-cart bg-ole-orange text-white px-4 py-2 rounded-lg hover:bg-opacity-90 transition-all" data-name="Cheese Burger" data-price="11.00" data-description="Beef patty, sliced cheese, sauce: tomato or BBQ">
+                            Add to Cart
+                        </button>
+                    </div>
+                </div>
+
+                <div class="menu-card bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 border-l-4 border-ole-orange">
+                    <h3 class="text-xl font-bold text-gray-800 dark:text-white mb-2">Bacon Cheese</h3>
+                    <p class="text-gray-600 dark:text-gray-300 text-sm mb-4">Beef patty, sliced cheese, bacon</p>
+                    <div class="flex justify-between items-center">
+                        <span class="text-2xl font-bold text-ole-orange">$14.00</span>
+                        <button class="add-to-cart bg-ole-orange text-white px-4 py-2 rounded-lg hover:bg-opacity-90 transition-all" data-name="Bacon Cheese" data-price="14.00" data-description="Beef patty, sliced cheese, bacon">
+                            Add to Cart
+                        </button>
+                    </div>
+                </div>
+
+                <div class="menu-card bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 border-l-4 border-ole-orange">
+                    <h3 class="text-xl font-bold text-gray-800 dark:text-white mb-2">Classic Beef</h3>
+                    <p class="text-gray-600 dark:text-gray-300 text-sm mb-4">Beef patty, grilled onion, fresh tomato, lettuce, mayo, sauce: tomato or BBQ</p>
+                    <div class="flex justify-between items-center">
+                        <span class="text-2xl font-bold text-ole-orange">$12.00</span>
+                        <button class="add-to-cart bg-ole-orange text-white px-4 py-2 rounded-lg hover:bg-opacity-90 transition-all" data-name="Classic Beef" data-price="12.00" data-description="Beef patty, grilled onion, fresh tomato, lettuce, mayo, sauce: tomato or BBQ">
+                            Add to Cart
+                        </button>
+                    </div>
+                </div>
+
+                <div class="menu-card bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 border-l-4 border-ole-orange">
+                    <h3 class="text-xl font-bold text-gray-800 dark:text-white mb-2">Fish Burger</h3>
+                    <p class="text-gray-600 dark:text-gray-300 text-sm mb-4">Battered fish, grilled onion, fresh tomato, lettuce, sliced cheese</p>
+                    <div class="flex justify-between items-center">
+                        <span class="text-2xl font-bold text-ole-orange">$11.50</span>
+                        <button class="add-to-cart bg-ole-orange text-white px-4 py-2 rounded-lg hover:bg-opacity-90 transition-all" data-name="Fish Burger" data-price="11.50" data-description="Battered fish, grilled onion, fresh tomato, lettuce, sliced cheese">
+                            Add to Cart
+                        </button>
+                    </div>
+                </div>
+
+                <div class="menu-card bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 border-l-4 border-ole-orange">
+                    <h3 class="text-xl font-bold text-gray-800 dark:text-white mb-2">Veggie Burger</h3>
+                    <p class="text-gray-600 dark:text-gray-300 text-sm mb-4">Grilled veggie patty, grilled onion, lettuce, shredded cheese, mayo</p>
+                    <div class="flex justify-between items-center">
+                        <span class="text-2xl font-bold text-ole-orange">$11.00</span>
+                        <button class="add-to-cart bg-ole-orange text-white px-4 py-2 rounded-lg hover:bg-opacity-90 transition-all" data-name="Veggie Burger" data-price="11.00" data-description="Grilled veggie patty, grilled onion, lettuce, shredded cheese, mayo">
+                            Add to Cart
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="chicken" class="category-section hidden">
+            <h2 class="text-3xl font-bold text-gray-800 dark:text-white mb-6">🍗 Chicken</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div class="menu-card bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 border-l-4 border-ole-orange">
+                    <h3 class="text-xl font-bold text-gray-800 dark:text-white mb-2">Quarter Chicken</h3>
+                    <p class="text-gray-600 dark:text-gray-300 text-sm mb-4">Fresh grilled quarter chicken</p>
+                    <div class="flex justify-between items-center">
+                        <span class="text-2xl font-bold text-ole-orange">$6.50</span>
+                        <button class="add-to-cart bg-ole-orange text-white px-4 py-2 rounded-lg hover:bg-opacity-90 transition-all" data-name="Quarter Chicken" data-price="6.50" data-description="Fresh grilled quarter chicken">
+                            Add to Cart
+                        </button>
+                    </div>
+                </div>
+
+                <div class="menu-card bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 border-l-4 border-ole-orange">
+                    <h3 class="text-xl font-bold text-gray-800 dark:text-white mb-2">Half Chicken</h3>
+                    <p class="text-gray-600 dark:text-gray-300 text-sm mb-4">Fresh grilled half chicken</p>
+                    <div class="flex justify-between items-center">
+                        <span class="text-2xl font-bold text-ole-orange">$10.00</span>
+                        <button class="add-to-cart bg-ole-orange text-white px-4 py-2 rounded-lg hover:bg-opacity-90 transition-all" data-name="Half Chicken" data-price="10.00" data-description="Fresh grilled half chicken">
+                            Add to Cart
+                        </button>
+                    </div>
+                </div>
+
+                <div class="menu-card bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 border-l-4 border-ole-orange">
+                    <h3 class="text-xl font-bold text-gray-800 dark:text-white mb-2">Whole Chicken</h3>
+                    <p class="text-gray-600 dark:text-gray-300 text-sm mb-4">Fresh grilled whole chicken</p>
+                    <div class="flex justify-between items-center">
+                        <span class="text-2xl font-bold text-ole-orange">$15.00</span>
+                        <button class="add-to-cart bg-ole-orange text-white px-4 py-2 rounded-lg hover:bg-opacity-90 transition-all" data-name="Whole Chicken" data-price="15.00" data-description="Fresh grilled whole chicken">
+                            Add to Cart
+                        </button>
+                    </div>
+                </div>
+
+                <div class="menu-card bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 border-l-4 border-ole-orange">
+                    <h3 class="text-xl font-bold text-gray-800 dark:text-white mb-2">Family Dinner Pack</h3>
+                    <p class="text-gray-600 dark:text-gray-300 text-sm mb-4">Whole chicken, large chips, large salad and two cans of soft drink</p>
+                    <div class="flex justify-between items-center">
+                        <span class="text-2xl font-bold text-ole-orange">$34.00</span>
+                        <button class="add-to-cart bg-ole-orange text-white px-4 py-2 rounded-lg hover:bg-opacity-90 transition-all" data-name="Family Dinner Pack" data-price="34.00" data-description="Whole chicken, large chips, large salad and two cans of soft drink">
+                            Add to Cart
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="wraps" class="category-section hidden">
+            <h2 class="text-3xl font-bold text-gray-800 dark:text-white mb-6">🌯 Wraps</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div class="menu-card bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 border-l-4 border-ole-orange">
+                    <h3 class="text-xl font-bold text-gray-800 dark:text-white mb-2">Chicken Wrap</h3>
+                    <p class="text-gray-600 dark:text-gray-300 text-sm mb-4">BBQ chicken, lettuce, fresh tomato, sauce</p>
+                    <div class="flex justify-between items-center">
+                        <span class="text-2xl font-bold text-ole-orange">$11.00</span>
+                        <button class="add-to-cart bg-ole-orange text-white px-4 py-2 rounded-lg hover:bg-opacity-90 transition-all" data-name="Chicken Wrap" data-price="11.00" data-description="BBQ chicken, lettuce, fresh tomato, sauce">
+                            Add to Cart
+                        </button>
+                    </div>
+                </div>
+
+                <div class="menu-card bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 border-l-4 border-ole-orange">
+                    <h3 class="text-xl font-bold text-gray-800 dark:text-white mb-2">Crispy Chicken Wrap</h3>
+                    <p class="text-gray-600 dark:text-gray-300 text-sm mb-4">Two crispy fried tenders, lettuce, shredded cheese, mayo</p>
+                    <div class="flex justify-between items-center">
+                        <span class="text-2xl font-bold text-ole-orange">$12.00</span>
+                        <button class="add-to-cart bg-ole-orange text-white px-4 py-2 rounded-lg hover:bg-opacity-90 transition-all" data-name="Crispy Chicken Wrap" data-price="12.00" data-description="Two crispy fried tenders, lettuce, shredded cheese, mayo">
+                            Add to Cart
+                        </button>
+                    </div>
+                </div>
+
+                <div class="menu-card bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 border-l-4 border-ole-orange">
+                    <h3 class="text-xl font-bold text-gray-800 dark:text-white mb-2">Fish Wrap</h3>
+                    <p class="text-gray-600 dark:text-gray-300 text-sm mb-4">Battered fish, grilled onion, lettuce, shredded cheese, mayo, sauce</p>
+                    <div class="flex justify-between items-center">
+                        <span class="text-2xl font-bold text-ole-orange">$11.50</span>
+                        <button class="add-to-cart bg-ole-orange text-white px-4 py-2 rounded-lg hover:bg-opacity-90 transition-all" data-name="Fish Wrap" data-price="11.50" data-description="Battered fish, grilled onion, lettuce, shredded cheese, mayo, sauce">
+                            Add to Cart
+                        </button>
+                    </div>
+                </div>
+
+                <div class="menu-card bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 border-l-4 border-ole-orange">
+                    <h3 class="text-xl font-bold text-gray-800 dark:text-white mb-2">Veggie Wrap</h3>
+                    <p class="text-gray-600 dark:text-gray-300 text-sm mb-4">Grilled veggie patty, grilled onion, lettuce, shredded cheese, mayo</p>
+                    <div class="flex justify-between items-center">
+                        <span class="text-2xl font-bold text-ole-orange">$11.00</span>
+                        <button class="add-to-cart bg-ole-orange text-white px-4 py-2 rounded-lg hover:bg-opacity-90 transition-all" data-name="Veggie Wrap" data-price="11.00" data-description="Grilled veggie patty, grilled onion, lettuce, shredded cheese, mayo">
+                            Add to Cart
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="sides" class="category-section hidden">
+            <h2 class="text-3xl font-bold text-gray-800 dark:text-white mb-6">🍟 Sides &amp; Drinks</h2>
+            
+            <div class="mb-8">
+                <h3 class="text-2xl font-bold text-gray-700 dark:text-gray-300 mb-4">Chips</h3>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div class="menu-card bg-white dark:bg-gray-800 rounded-lg shadow-md p-4 border-l-4 border-ole-orange">
+                        <h4 class="text-lg font-bold text-gray-800 dark:text-white mb-2">Small Chips</h4>
+                        <div class="flex justify-between items-center">
+                            <span class="text-xl font-bold text-ole-orange">$5.00</span>
+                            <button class="add-to-cart bg-ole-orange text-white px-3 py-1 rounded hover:bg-opacity-90 transition-all text-sm" data-name="Small Chips" data-price="5.00" data-description="Fresh cut potato chips">
+                                Add
+                            </button>
+                        </div>
+                    </div>
+                    <div class="menu-card bg-white dark:bg-gray-800 rounded-lg shadow-md p-4 border-l-4 border-ole-orange">
+                        <h4 class="text-lg font-bold text-gray-800 dark:text-white mb-2">Large Chips</h4>
+                        <div class="flex justify-between items-center">
+                            <span class="text-xl font-bold text-ole-orange">$7.00</span>
+                            <button class="add-to-cart bg-ole-orange text-white px-3 py-1 rounded hover:bg-opacity-90 transition-all text-sm" data-name="Large Chips" data-price="7.00" data-description="Fresh cut potato chips">
+                                Add
+                            </button>
+                        </div>
+                    </div>
+                    <div class="menu-card bg-white dark:bg-gray-800 rounded-lg shadow-md p-4 border-l-4 border-ole-orange">
+                        <h4 class="text-lg font-bold text-gray-800 dark:text-white mb-2">Extra Large Chips</h4>
+                        <div class="flex justify-between items-center">
+                            <span class="text-xl font-bold text-ole-orange">$11.00</span>
+                            <button class="add-to-cart bg-ole-orange text-white px-3 py-1 rounded hover:bg-opacity-90 transition-all text-sm" data-name="Extra Large Chips" data-price="11.00" data-description="Fresh cut potato chips">
+                                Add
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mb-8">
+                <h3 class="text-2xl font-bold text-gray-700 dark:text-gray-300 mb-4">Drinks</h3>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div class="menu-card bg-white dark:bg-gray-800 rounded-lg shadow-md p-4 border-l-4 border-ole-orange">
+                        <h4 class="text-lg font-bold text-gray-800 dark:text-white mb-2">Can</h4>
+                        <div class="flex justify-between items-center">
+                            <span class="text-xl font-bold text-ole-orange">$3.00</span>
+                            <button class="add-to-cart bg-ole-orange text-white px-3 py-1 rounded hover:bg-opacity-90 transition-all text-sm" data-name="Can Drink" data-price="3.00" data-description="Soft drink can">
+                                Add
+                            </button>
+                        </div>
+                    </div>
+                    <div class="menu-card bg-white dark:bg-gray-800 rounded-lg shadow-md p-4 border-l-4 border-ole-orange">
+                        <h4 class="text-lg font-bold text-gray-800 dark:text-white mb-2">600ml Bottle</h4>
+                        <div class="flex justify-between items-center">
+                            <span class="text-xl font-bold text-ole-orange">$6.00</span>
+                            <button class="add-to-cart bg-ole-orange text-white px-3 py-1 rounded hover:bg-opacity-90 transition-all text-sm" data-name="600ml Bottle" data-price="6.00" data-description="Soft drink bottle">
+                                Add
+                            </button>
+                        </div>
+                    </div>
+                    <div class="menu-card bg-white dark:bg-gray-800 rounded-lg shadow-md p-4 border-l-4 border-ole-orange">
+                        <h4 class="text-lg font-bold text-gray-800 dark:text-white mb-2">Water</h4>
+                        <div class="flex justify-between items-center">
+                            <span class="text-xl font-bold text-ole-orange">$3.00</span>
+                            <button class="add-to-cart bg-ole-orange text-white px-3 py-1 rounded hover:bg-opacity-90 transition-all text-sm" data-name="Water" data-price="3.00" data-description="Bottled water">
+                                Add
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mb-8">
+                <h3 class="text-2xl font-bold text-gray-700 dark:text-gray-300 mb-4">Make it a Meal</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="menu-card bg-white dark:bg-gray-800 rounded-lg shadow-md p-4 border-l-4 border-ole-orange">
+                        <h4 class="text-lg font-bold text-gray-800 dark:text-white mb-2">Small Chips + Can Drink</h4>
+                        <div class="flex justify-between items-center">
+                            <span class="text-xl font-bold text-ole-orange">$6.00</span>
+                            <button class="add-to-cart bg-ole-orange text-white px-3 py-1 rounded hover:bg-opacity-90 transition-all text-sm" data-name="Small Meal Deal" data-price="6.00" data-description="Small chips and can drink">
+                                Add
+                            </button>
+                        </div>
+                    </div>
+                    <div class="menu-card bg-white dark:bg-gray-800 rounded-lg shadow-md p-4 border-l-4 border-ole-orange">
+                        <h4 class="text-lg font-bold text-gray-800 dark:text-white mb-2">Large Chips + 600ml Drink</h4>
+                        <div class="flex justify-between items-center">
+                            <span class="text-xl font-bold text-ole-orange">$9.00</span>
+                            <button class="add-to-cart bg-ole-orange text-white px-3 py-1 rounded hover:bg-opacity-90 transition-all text-sm" data-name="Large Meal Deal" data-price="9.00" data-description="Large chips and 600ml drink">
+                                Add
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <div id="cart-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg max-w-md w-full mx-4 max-h-96 overflow-y-auto">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-xl font-bold text-gray-800 dark:text-white">Your Cart</h3>
+                <button id="close-cart" class="text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-white text-2xl">×</button>
+            </div>
+            <div id="cart-items" class="space-y-3 mb-4">
+                </div>
+            <div class="border-t pt-4">
+                <div class="flex justify-between items-center mb-4">
+                    <span class="text-lg font-bold text-gray-800 dark:text-white">Total:</span>
+                    <span id="cart-total" class="text-xl font-bold text-ole-orange">$0.00</span>
+                </div>
+                <button id="checkout-btn" class="w-full bg-ole-orange text-white py-3 rounded-lg font-semibold hover:bg-opacity-90 transition-all">
+                    Proceed to Checkout
+                </button>
+            </div>
+        </div>
     </div>
-  </header>
 
-  <!-- Nav + Main content remain functionally the same; ensure all filenames used are lowercase: index.html, menu.html, order.html -->
+    <script>
+        // Cart functionality
+        let cart = [];
+        let cartTotal = 0;
 
-  <main class="container mx-auto px-4 py-8">
-    <!-- product cards... (kept from original; ensure data attributes exist and buttons work) -->
-    <!-- ... -->
-  </main>
+        // Category switching
+        document.querySelectorAll('.category-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                // Update active button
+                document.querySelectorAll('.category-btn').forEach(b => {
+                    b.classList.remove('bg-ole-orange', 'text-white');
+                    b.classList.add('text-gray-600', 'dark:text-gray-300', 'hover:bg-gray-100', 'dark:hover:bg-gray-700');
+                });
+                btn.classList.add('bg-ole-orange', 'text-white');
+                btn.classList.remove('text-gray-600', 'dark:text-gray-300', 'hover:bg-gray-100', 'dark:hover:bg-gray-700');
 
-  <!-- Cart modal, scripts, and cart logic (kept from original) -->
-  <script>
-    // Keep original cart code, ensure you have unique names and lowercase file references.
-    // (For brevity in this file preview I did not duplicate every menu item; keep the code from your original Order.html,
-    // but change all links to index.html and menu.html and the logo src to logo.png)
-  </script>
+                // Show selected category
+                const category = btn.dataset.category;
+                document.querySelectorAll('.category-section').forEach(section => {
+                    section.classList.add('hidden');
+                });
+                document.getElementById(category).classList.remove('hidden');
+            });
+        });
+
+        // Add to cart functionality
+        document.querySelectorAll('.add-to-cart').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const name = btn.dataset.name;
+                const price = parseFloat(btn.dataset.price);
+                const description = btn.dataset.description;
+
+                // Check if item already exists in cart
+                const existingItem = cart.find(item => item.name === name);
+                if (existingItem) {
+                    existingItem.quantity += 1;
+                } else {
+                    cart.push({ name, price, description, quantity: 1 });
+                }
+
+                updateCart();
+                
+                // Visual feedback
+                btn.classList.add('cart-badge');
+                setTimeout(() => btn.classList.remove('cart-badge'), 600);
+            });
+        });
+
+        function updateCart() {
+            cartTotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            
+            // Update cart count
+            const cartCount = document.getElementById('cart-count');
+            const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+            
+            if (totalItems > 0) {
+                cartCount.textContent = totalItems;
+                cartCount.classList.remove('hidden');
+                cartCount.classList.add('cart-badge');
+                setTimeout(() => cartCount.classList.remove('cart-badge'), 600);
+            } else {
+                cartCount.classList.add('hidden');
+            }
+
+            // Update cart items display
+            const cartItems = document.getElementById('cart-items');
+            if (cart.length === 0) {
+                cartItems.innerHTML = '<p class="text-gray-500 dark:text-gray-400 text-center">Your cart is empty</p>';
+            } else {
+                cartItems.innerHTML = cart.map(item => `
+                    <div class="flex justify-between items-center bg-gray-50 dark:bg-gray-700 p-3 rounded">
+                        <div class="flex-1">
+                            <h4 class="font-medium text-gray-800 dark:text-white">${item.name}</h4>
+                            <p class="text-sm text-gray-600 dark:text-gray-300">$${item.price.toFixed(2)} x ${item.quantity}</p>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <button class="quantity-btn bg-ole-orange text-white w-6 h-6 rounded-full flex items-center justify-center text-sm" 
+                                    onclick="changeQuantity('${item.name}', -1)">-</button>
+                            <span class="text-gray-800 dark:text-white">${item.quantity}</span>
+                            <button class="quantity-btn bg-ole-orange text-white w-6 h-6 rounded-full flex items-center justify-center text-sm" 
+                                    onclick="changeQuantity('${item.name}', 1)">+</button>
+                            <button class="text-red-500 hover:text-red-700 ml-2" onclick="removeItem('${item.name}')">🗑️</button>
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            // Update total
+            document.getElementById('cart-total').textContent = `$${cartTotal.toFixed(2)}`;
+        }
+
+        function changeQuantity(name, change) {
+            const item = cart.find(item => item.name === name);
+            if (item) {
+                item.quantity += change;
+                if (item.quantity <= 0) {
+                    cart = cart.filter(cartItem => cartItem.name !== name);
+                }
+                updateCart();
+            }
+        }
+
+        function removeItem(name) {
+            cart = cart.filter(item => item.name !== name);
+            updateCart();
+        }
+
+        // Cart modal functionality
+        document.getElementById('cart-btn').addEventListener('click', () => {
+            document.getElementById('cart-modal').classList.remove('hidden');
+        });
+
+        document.getElementById('close-cart').addEventListener('click', () => {
+            document.getElementById('cart-modal').classList.add('hidden');
+        });
+
+        // Checkout functionality
+        document.getElementById('checkout-btn').addEventListener('click', () => {
+            if (cart.length === 0) {
+                showCustomAlert('Your cart is empty!');
+                return;
+            }
+
+            const orderSummary = cart.map(item => 
+                `${item.name} x${item.quantity} - $${(item.price * item.quantity).toFixed(2)}`
+            ).join('\n');
+
+            showCustomAlert(`Order placed successfully!\n\nOrder Summary:\n${orderSummary}\n\nTotal: $${cartTotal.toFixed(2)}\n\nThank you for choosing Ole Chicken Burgers!`);
+            
+            // Clear cart
+            cart = [];
+            updateCart();
+            document.getElementById('cart-modal').classList.add('hidden');
+        });
+
+        // Custom alert function
+        function showCustomAlert(message) {
+            const modal = document.createElement('div');
+            modal.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50';
+            modal.innerHTML = `
+                <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg max-w-sm w-full mx-4">
+                    <h3 class="text-lg font-bold text-gray-800 dark:text-white">Order Confirmation</h3>
+                    <p class="text-gray-700 dark:text-gray-300 mb-4 whitespace-pre-line">${message}</p>
+                    <button class="w-full bg-ole-orange text-white py-2 rounded hover:bg-opacity-90 transition-all" 
+                            onclick="this.closest('.fixed').remove()">OK</button>
+                </div>
+            `;
+            document.body.appendChild(modal);
+        }
+
+        // Initialize cart
+        updateCart();
+    </script>
 </body>
 </html>
